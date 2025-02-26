@@ -18,9 +18,6 @@ public class PlayerMovement : MonoBehaviour
     private const string _lastHorizontal = "LastHorizontal";
     private const string _lastVertical = "LastVertical";
     private bool _canMove = true;
-    private bool _isSliding = false;
-    private bool _slideSpeedMultiplier = 1f;
-    private float _slideDuration = 0.5f;
 
     void Awake()
     {
