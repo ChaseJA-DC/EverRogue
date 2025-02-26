@@ -20,8 +20,8 @@ public class PlayerMovement : MonoBehaviour
     private bool _canMove = true;
     private bool _isSliding = false;
     private bool _slideOnCooldown = false;
-    private float _slideSpeedMultiplier = 200f;
-    private float _slideDuration = 0.2f;
+    private float _slideSpeedMultiplier = 70f;
+    private float _slideDuration = 0.5f;
     private float _slideCooldown = 2f;
     private Vector2 _slideDirection;
 
