@@ -18,7 +18,14 @@ public class PlayerMovement : MonoBehaviour
     private const string _lastHorizontal = "LastHorizontal";
     private const string _lastVertical = "LastVertical";
     private bool _canMove = true;
-    
+    private bool _isSliding = false;
+    private bool _slideOnCooldown = false;
+    private float _slideSpeedMultiplier = 200f;
+    private float _slideDuration = 0.2f;
+    private float _slideCooldown = 2f;
+    private Vector2 _slideDirection;
+
+
     void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -32,25 +39,22 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (_canMove)
+        if (!_isSliding && _canMove)
         {
             _movement.Set(InputManager.Movement.x, InputManager.Movement.y);
+        }
 
-            // Attempt to move using collision detection
+        if (Input.GetKeyDown(KeyCode.Space) && !_isSliding && !_slideOnCooldown && _movement != Vector2.zero)
+        {
+            StartCoroutine(Slide());
+        }
+
+        if (!_isSliding)
+        {
             bool success = TryMove(_movement);
+            if (!success) success = TryMove(new Vector2(_movement.x, 0));
+            if (!success) success = TryMove(new Vector2(0, _movement.y));
 
-            if (!success) 
-            {
-                // Try moving only in the X direction
-                success = TryMove(new Vector2(_movement.x, 0));
-            }
-            if (!success) 
-            {
-                // Try moving only in the Y direction
-                success = TryMove(new Vector2(0, _movement.y));
-            }
-
-            // Update animations
             _animator.SetFloat(_horizontal, _movement.x);
             _animator.SetFloat(_vertical, _movement.y);
 
@@ -82,4 +86,44 @@ public class PlayerMovement : MonoBehaviour
         }
         return false;
     }
+    private IEnumerator Slide()
+{
+    _isSliding = true;
+    _canMove = false;
+    _slideOnCooldown = true; // Start cooldown
+
+    _animator.SetBool("isSliding", true); // Use boolean for animation transition
+
+    // Store movement direction before starting slide
+    _slideDirection = _movement.normalized;
+
+    if (_slideDirection == Vector2.zero)
+    {
+        _isSliding = false;
+        _canMove = true;
+        _slideOnCooldown = false;
+        _animator.SetBool("isSliding", false); // Reset animation if canceled
+        yield break;
+    }
+
+    float slideSpeed = _moveSpeed * _slideSpeedMultiplier;
+
+    // Apply an instant force to the Rigidbody2D for a fast slide
+    _rb.velocity = _slideDirection * slideSpeed;
+
+    yield return new WaitForSeconds(_slideDuration);
+
+    // Stop movement after sliding
+    _rb.velocity = Vector2.zero;
+    _isSliding = false;
+    _canMove = true;
+    _animator.SetBool("isSliding", false); // Transition back to Idle after sliding
+
+    // Wait for cooldown duration before allowing another slide
+    yield return new WaitForSeconds(_slideCooldown);
+    _slideOnCooldown = false;
+}
+
+
+
 }
