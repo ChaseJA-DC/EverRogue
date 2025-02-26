@@ -24,3 +24,4 @@
 *.bak
 *.swp
 *.lock
+.vscode/settings.json
