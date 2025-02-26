@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     private const string _lastHorizontal = "LastHorizontal";
     private const string _lastVertical = "LastVertical";
     private bool _canMove = true;
-
+    
     void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
