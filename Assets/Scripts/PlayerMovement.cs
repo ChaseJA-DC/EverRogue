@@ -20,8 +20,8 @@ public class PlayerMovement : MonoBehaviour
     private bool _canMove = true;
     private bool _isSliding = false;
     private bool _slideOnCooldown = false;
-    private float _slideSpeedMultiplier = 70f;
-    private float _slideDuration = 0.5f;
+    private float _slideSpeedMultiplier = 200f;
+    private float _slideDuration = 0.3f;
     private float _slideCooldown = 2f;
     private Vector2 _slideDirection;
 
@@ -86,43 +86,47 @@ public class PlayerMovement : MonoBehaviour
         }
         return false;
     }
-    private IEnumerator Slide()
-{
-    _isSliding = true;
-    _canMove = false;
-    _slideOnCooldown = true; // Start cooldown
-
-    _animator.SetBool("isSliding", true); // Use boolean for animation transition
-
-    // Store movement direction before starting slide
-    _slideDirection = _movement.normalized;
-
-    if (_slideDirection == Vector2.zero)
+        private IEnumerator Slide()
     {
+        _isSliding = true;
+        _canMove = false;
+        _slideOnCooldown = true;
+
+        _animator.SetBool("isSliding", true);
+
+        _slideDirection = _movement.normalized;
+
+        if (_slideDirection == Vector2.zero)
+        {
+            _isSliding = false;
+            _canMove = true;
+            _slideOnCooldown = false;
+            _animator.SetBool("isSliding", false);
+            yield break;
+        }
+
+        float elapsedTime = 0f;
+        float initialSpeed = _moveSpeed * _slideSpeedMultiplier;
+
+        while (elapsedTime < _slideDuration)
+        {
+            // Decay the speed using a smooth curve (quadratic easing out)
+            float decayedSpeed = Mathf.Lerp(initialSpeed, 0, (elapsedTime / _slideDuration) * (elapsedTime / _slideDuration));
+
+            _rb.velocity = _slideDirection * decayedSpeed;
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        _rb.velocity = Vector2.zero;
         _isSliding = false;
         _canMove = true;
+        _animator.SetBool("isSliding", false);
+
+        yield return new WaitForSeconds(_slideCooldown);
         _slideOnCooldown = false;
-        _animator.SetBool("isSliding", false); // Reset animation if canceled
-        yield break;
     }
-
-    float slideSpeed = _moveSpeed * _slideSpeedMultiplier;
-
-    // Apply an instant force to the Rigidbody2D for a fast slide
-    _rb.velocity = _slideDirection * slideSpeed;
-
-    yield return new WaitForSeconds(_slideDuration);
-
-    // Stop movement after sliding
-    _rb.velocity = Vector2.zero;
-    _isSliding = false;
-    _canMove = true;
-    _animator.SetBool("isSliding", false); // Transition back to Idle after sliding
-
-    // Wait for cooldown duration before allowing another slide
-    yield return new WaitForSeconds(_slideCooldown);
-    _slideOnCooldown = false;
-}
 
 
 
