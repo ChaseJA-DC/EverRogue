@@ -1,38 +1,69 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SwordAttack : MonoBehaviour
 {
     public Collider2D swordCollider;
     public float damage = 3;
-    private Vector2 attackOffset; // Store the local offset instead of world position
+    public float attackDuration = 0.2f;
 
-    private void Start() {
-        // Ensure the sword stays at the correct offset relative to the player
-        attackOffset = transform.localPosition;
+    private Animator animator;
+    private Transform playerTransform;
+
+    private void Start()
+    {
+        if (swordCollider == null)
+        {
+            swordCollider = GetComponent<Collider2D>(); // Auto-assign if not set
+        }
+
+        animator = GetComponentInParent<Animator>(); // Get the player's Animator
+        playerTransform = GetComponentInParent<Transform>(); // Get player's Transform
     }
 
-    public void AttackRight() {
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0)) // Left-click attack
+        {
+            Attack();
+        }
+    }
+
+    private void Attack()
+    {
+        if (playerTransform == null || animator == null) return;
+
+        // Get mouse position in world space
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (mousePosition - playerTransform.position).normalized;
+
+        animator.SetFloat("MouseHorizontal", direction.x);
+        animator.SetFloat("MouseVertical", direction.y);
+        animator.SetTrigger("swordAttack");
+
         swordCollider.enabled = true;
-        transform.localPosition = attackOffset; // Use local position to stay anchored to the player
+        StartCoroutine(DisableAttack());
     }
 
-    public void AttackLeft() {
-        swordCollider.enabled = true;
-        transform.localPosition = new Vector3(-attackOffset.x, attackOffset.y, attackOffset.y); // Mirror in local space
+    public void EndAttack()
+    {
+        animator.ResetTrigger("swordAttack");
     }
 
-    public void StopAttack() {
+    private IEnumerator DisableAttack()
+    {
+        yield return new WaitForSeconds(attackDuration);
         swordCollider.enabled = false;
     }
 
-    private void OnTriggerEnter2D(Collider2D other) {
-        if(other.CompareTag("Enemy")) { // Use CompareTag for efficiency
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
             Enemy enemy = other.GetComponent<Enemy>();
-
-            if(enemy != null) {
-                enemy.Health -= damage;
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
             }
         }
     }
