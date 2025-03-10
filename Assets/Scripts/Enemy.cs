@@ -49,30 +49,30 @@ public class Enemy : MonoBehaviour
 
         Color originalColor = spriteRenderer.color;
         spriteRenderer.color = Color.white;
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.5f);
         spriteRenderer.color = originalColor;
 
         isFlashing = false;
     }
 
     private void Defeated()
-{
-    if (animator != null)
     {
-        animator.SetTrigger("Defeated"); // Check if Animator exists
+        // if (animator != null)
+        // {
+        //     animator.SetTrigger("Defeated");
+        // }
+
+        rb.velocity = Vector2.zero;
+        rb.simulated = false;
+        GetComponent<Collider2D>().enabled = false;
+
+        if (dropPrefab != null)
+        {
+            Instantiate(dropPrefab, transform.position, Quaternion.identity);
+        }
+
+        Destroy(gameObject, 0.5f);
     }
-
-    rb.velocity = Vector2.zero;
-    rb.simulated = false;
-    GetComponent<Collider2D>().enabled = false;
-
-    if (dropPrefab != null)
-    {
-        Instantiate(dropPrefab, transform.position, Quaternion.identity);
-    }
-
-    Destroy(gameObject, 0.5f);
-}
 
 
     private void OnCollisionEnter2D(Collision2D collision)
