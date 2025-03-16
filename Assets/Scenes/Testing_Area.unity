@@ -301,12 +301,28 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5963914838022320791, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
+      propertyPath: m_Size.x
+      value: 1.0196087
+      objectReference: {fileID: 0}
+    - target: {fileID: 5963914838022320791, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
+      propertyPath: m_Size.y
+      value: 1.0311917
+      objectReference: {fileID: 0}
+    - target: {fileID: 5963914838022320791, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5963914838022320791, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.89522743
+      objectReference: {fileID: 0}
+    - target: {fileID: 5963914838022320791, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.16575676
       objectReference: {fileID: 0}
     - target: {fileID: 5963914838022320791, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
       propertyPath: m_EdgeRadius
-      value: 1
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 5963914838022320791, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
       propertyPath: m_LayerOverridePriority
