@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private float _moveSpeed = 0.03f;
+    [SerializeField] private float _moveSpeed = 0.03f;
+    private float _originalMoveSpeed;
     private Vector2 _movement;
     private Rigidbody2D _rb;
     private Animator _animator;
@@ -30,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        _originalMoveSpeed = _moveSpeed;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -124,6 +126,17 @@ public class PlayerMovement : MonoBehaviour
         _slideOnCooldown = false;
     }
 
+    public void SetTemporaryMoveSpeed(float newSpeed, float duration)
+    {
+        StopCoroutine("ResetMoveSpeed"); // Cancel existing resets if any
+        _moveSpeed = newSpeed;
+        StartCoroutine(ResetMoveSpeedAfterDelay(duration));
+    }
 
+    private IEnumerator ResetMoveSpeedAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        _moveSpeed = _originalMoveSpeed;
+    }
 
 }
