@@ -45,6 +45,32 @@ public class SwordAttack : MonoBehaviour
         StartCoroutine(DisableAttack());
     }
 
+    public void AttackLeft()
+    {
+        animator.SetFloat("MouseHorizontal", -1);
+        animator.SetFloat("MouseVertical", 0);
+        animator.SetTrigger("swordAttack");
+
+        swordCollider.enabled = true;
+        StartCoroutine(DisableAttack());
+    }
+
+    public void AttackRight()
+    {
+        animator.SetFloat("MouseHorizontal", 1);
+        animator.SetFloat("MouseVertical", 0);
+        animator.SetTrigger("swordAttack");
+
+        swordCollider.enabled = true;
+        StartCoroutine(DisableAttack());
+    }
+
+    public void StopAttack()
+    {
+        animator.ResetTrigger("swordAttack");
+        swordCollider.enabled = false;
+    }
+
     public void EndAttack()
     {
         animator.ResetTrigger("swordAttack");
