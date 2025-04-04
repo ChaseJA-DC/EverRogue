@@ -15738,11 +15738,13 @@ PrefabInstance:
       propertyPath: attackDuration
       value: 0.1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -3173148813868530955, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
     m_RemovedGameObjects:
     - {fileID: 8009319650237880716, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
     - {fileID: 5126563554409419918, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
     - {fileID: 3012654989081527579, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
+    - {fileID: 2364590827204419317, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3353534783686809917, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
@@ -15775,7 +15777,7 @@ MonoBehaviour:
   attackDuration: 0.7
   slowSpeed: 0.01
   projectilePrefab: {fileID: 1944990566205320063, guid: b03b7d4b5c0204f45b20834740cbee84, type: 3}
-  firePoint: {fileID: 0}
+  firePoint: {fileID: 2005869443}
   projectileSpeed: 1
 --- !u!1 &1206721446
 GameObject:
@@ -55400,6 +55402,11 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!4 &2005869443 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4754310160052715411, guid: 74e74eb9f57f5634e92446db22601d73, type: 3}
+  m_PrefabInstance: {fileID: 1101827310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2145238623
 GameObject:
   m_ObjectHideFlags: 0
