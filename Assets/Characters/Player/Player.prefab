@@ -317,7 +317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   swordHitboxPrefab: {fileID: 3864879145879617620, guid: 6b4555dc6bf5f4547a027e14f6fd559d, type: 3}
   damage: 3
-  attackDuration: 0.5
+  attackDuration: 0.45
   hitstunDuration: 0.3
   attackPivot: {fileID: 7938907633760916538}
 --- !u!114 &-3173148813868530955
