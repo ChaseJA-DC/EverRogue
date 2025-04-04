@@ -34,8 +34,9 @@ public class ShootAttack : MonoBehaviour
         if (playerTransform == null || animator == null || playerMovement == null) return;
 
         // Get mouse position in world space
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (mousePosition - playerTransform.position).normalized;
+        Vector2 worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (worldMousePos - (Vector2)playerTransform.position).normalized;
+
 
         animator.SetFloat("MouseHorizontal", direction.x);
         animator.SetFloat("MouseVertical", direction.y);

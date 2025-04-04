@@ -3,27 +3,28 @@ using UnityEngine;
 
 public class SwordAttack : MonoBehaviour
 {
-    public Collider2D swordCollider;
-    public float damage = 3;
+    public GameObject swordHitboxPrefab;      // Prefab to spawn
+    public float damage = 3f;
     public float attackDuration = 0.2f;
+    public float hitstunDuration = 0.3f;
+    public Transform attackPivot;             // Where to rotate around (player feet)
 
     private Animator animator;
-    private Transform playerTransform;
 
     private void Start()
     {
-        if (swordCollider == null)
-        {
-            swordCollider = GetComponent<Collider2D>(); // Auto-assign if not set
-        }
+        animator = GetComponentInParent<Animator>();
 
-        animator = GetComponentInParent<Animator>(); // Get the player's Animator
-        playerTransform = GetComponentInParent<Transform>(); // Get player's Transform
+        if (swordHitboxPrefab == null)
+            Debug.LogError("Sword hitbox prefab not assigned!");
+
+        if (attackPivot == null)
+            Debug.LogError("Attack pivot not assigned!");
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0)) // Left-click attack
+        if (Input.GetMouseButtonDown(0)) // Left-click
         {
             Attack();
         }
@@ -31,66 +32,38 @@ public class SwordAttack : MonoBehaviour
 
     private void Attack()
     {
-        if (playerTransform == null || animator == null) return;
+        if (attackPivot == null || animator == null || swordHitboxPrefab == null) return;
 
-        // Get mouse position in world space
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (mousePosition - playerTransform.position).normalized;
+        mousePosition.z = 0;
+        Vector2 direction = (mousePosition - attackPivot.position).normalized;
 
         animator.SetFloat("MouseHorizontal", direction.x);
         animator.SetFloat("MouseVertical", direction.y);
         animator.SetTrigger("swordAttack");
 
-        swordCollider.enabled = true;
-        StartCoroutine(DisableAttack());
+        float swordDistance = 0.5f;
+        Vector3 spawnPos = attackPivot.position + (Vector3)(direction * swordDistance);
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        GameObject hitbox = Instantiate(swordHitboxPrefab, spawnPos, Quaternion.Euler(0f, 0f, angle));
+        SwordHitbox hitboxScript = hitbox.GetComponent<SwordHitbox>();
+
+        if (hitboxScript != null)
+        {
+            hitboxScript.Setup(damage, hitstunDuration);
+        }
+        else
+        {
+            Debug.LogError("SwordHitbox script missing on prefab!");
+        }
+
+        Destroy(hitbox, attackDuration);
     }
 
-    public void AttackLeft()
-    {
-        animator.SetFloat("MouseHorizontal", -1);
-        animator.SetFloat("MouseVertical", 0);
-        animator.SetTrigger("swordAttack");
-
-        swordCollider.enabled = true;
-        StartCoroutine(DisableAttack());
-    }
-
-    public void AttackRight()
-    {
-        animator.SetFloat("MouseHorizontal", 1);
-        animator.SetFloat("MouseVertical", 0);
-        animator.SetTrigger("swordAttack");
-
-        swordCollider.enabled = true;
-        StartCoroutine(DisableAttack());
-    }
-
-    public void StopAttack()
-    {
-        animator.ResetTrigger("swordAttack");
-        swordCollider.enabled = false;
-    }
 
     public void EndAttack()
     {
         animator.ResetTrigger("swordAttack");
-    }
-
-    private IEnumerator DisableAttack()
-    {
-        yield return new WaitForSeconds(attackDuration);
-        swordCollider.enabled = false;
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Enemy"))
-        {
-            Enemy enemy = other.GetComponent<Enemy>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(damage);
-            }
-        }
     }
 }
