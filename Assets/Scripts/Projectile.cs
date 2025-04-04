@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public float speed = 0.1f;
+    public float speed = 8f;
     public float lifeTime = 2f;
     public float damage = 5f;
+    public float knockbackForce = 0.5f;
     private Vector2 direction;
+    private bool hasHit = false;
 
     public void Initialize(Vector2 shootDirection)
     {
@@ -26,10 +28,16 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (hasHit) return;
+
         Enemy enemy = other.GetComponent<Enemy>();
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
+            Vector2 knockbackDir = direction;
+            enemy.ApplyHitstun(0.3f, knockbackDir * knockbackForce);
+            hasHit = true;
+            Destroy(gameObject);
         }
     }
 }
