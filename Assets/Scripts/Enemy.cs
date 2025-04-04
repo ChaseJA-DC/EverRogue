@@ -13,8 +13,8 @@ public class Enemy : MonoBehaviour
     private Animator animator;
     private Transform player;
 
-    private bool isFlashing = false;
-    private bool isStunned = false; // ✅ NEW
+    private bool isStunned = false;
+    private Color originalColor;
 
     private void Start()
     {
@@ -22,6 +22,9 @@ public class Enemy : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        spriteRenderer.color = Color.white;
+        originalColor = spriteRenderer.color;
     }
 
     private void FixedUpdate()
@@ -37,7 +40,7 @@ public class Enemy : MonoBehaviour
     {
         health -= damageAmount;
         Debug.Log($"Enemy hit for {damageAmount} damage!");
-        StartCoroutine(FlashWhite());
+        StartCoroutine(FlashRed());
 
         if (health <= 0)
         {
@@ -50,7 +53,6 @@ public class Enemy : MonoBehaviour
         if (!isStunned)
             StartCoroutine(Hitstun(duration, knockbackDir));
     }
-
 
     private IEnumerator Hitstun(float duration, Vector2 knockbackDir)
     {
@@ -65,18 +67,13 @@ public class Enemy : MonoBehaviour
         isStunned = false;
     }
 
-    private IEnumerator FlashWhite()
+    private IEnumerator FlashRed()
     {
-        if (isFlashing) yield break;
-        isFlashing = true;
-
-        Color originalColor = spriteRenderer.color;
-        spriteRenderer.color = Color.white;
-        yield return new WaitForSeconds(0.5f);
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(0.07f);
         spriteRenderer.color = originalColor;
-
-        isFlashing = false;
     }
+
 
     private void Defeated()
     {

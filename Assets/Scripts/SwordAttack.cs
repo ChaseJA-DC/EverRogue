@@ -3,13 +3,14 @@ using UnityEngine;
 
 public class SwordAttack : MonoBehaviour
 {
-    public GameObject swordHitboxPrefab;      // Prefab to spawn
+    public GameObject swordHitboxPrefab;
     public float damage = 3f;
-    public float attackDuration = 0.2f;
+    public float attackDuration = 0.45f;
     public float hitstunDuration = 0.3f;
-    public Transform attackPivot;             // Where to rotate around (player feet)
+    public Transform attackPivot;
 
     private Animator animator;
+    private bool canAttack = true;
 
     private void Start()
     {
@@ -24,7 +25,7 @@ public class SwordAttack : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0)) // Left-click
+        if (Input.GetMouseButtonDown(0) && canAttack) // Left-click
         {
             Attack();
         }
@@ -33,6 +34,8 @@ public class SwordAttack : MonoBehaviour
     private void Attack()
     {
         if (attackPivot == null || animator == null || swordHitboxPrefab == null) return;
+
+        canAttack = false;
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0;
@@ -59,8 +62,14 @@ public class SwordAttack : MonoBehaviour
         }
 
         Destroy(hitbox, attackDuration);
+        StartCoroutine(ResetAttackCooldown());
     }
 
+    private IEnumerator ResetAttackCooldown()
+    {
+        yield return new WaitForSeconds(attackDuration);
+        canAttack = true;
+    }
 
     public void EndAttack()
     {

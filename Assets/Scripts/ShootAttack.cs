@@ -10,44 +10,51 @@ public class ShootAttack : MonoBehaviour
     private Transform playerTransform;
     private PlayerMovement playerMovement;
     public GameObject projectilePrefab;
-    public Transform firePoint; // Shoot origin point
+    public Transform firePoint;
     public float projectileSpeed = 5f;
-
+    private bool projectileUnlocked = false;
+    private bool canAttack = true;
 
     private void Start()
     {
-        animator = GetComponentInParent<Animator>(); // Get the player's Animator
-        playerTransform = GetComponentInParent<Transform>(); // Get player's Transform
-        playerMovement = GetComponentInParent<PlayerMovement>(); // Get player's Movement
+        animator = GetComponentInParent<Animator>();
+        playerTransform = GetComponentInParent<Transform>();
+        playerMovement = GetComponentInParent<PlayerMovement>();
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(1)) // Right-click attack
+        if (Input.GetMouseButtonDown(1) && projectileUnlocked && canAttack)
         {
             Attack();
         }
+    }
+
+    public void EnableProjectile()
+    {
+        projectileUnlocked = true;
     }
 
     private void Attack()
     {
         if (playerTransform == null || animator == null || playerMovement == null) return;
 
-        // Get mouse position in world space
+        canAttack = false;
+
         Vector2 worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (worldMousePos - (Vector2)playerTransform.position).normalized;
-
 
         animator.SetFloat("MouseHorizontal", direction.x);
         animator.SetFloat("MouseVertical", direction.y);
         animator.SetTrigger("shootAttack");
-        
-        playerMovement.SetTemporaryMoveSpeed(slowSpeed, attackDuration); // Slow movement
 
-        
+        playerMovement.SetTemporaryMoveSpeed(slowSpeed, attackDuration);
+
         float fireDistance = 0.3f;
         firePoint.position = playerTransform.position + (Vector3)(direction * fireDistance);
         FireProjectile(direction);
+
+        StartCoroutine(ResetAttackCooldown());
     }
 
     private void FireProjectile(Vector2 direction)
@@ -58,6 +65,12 @@ public class ShootAttack : MonoBehaviour
         {
             projectileScript.Initialize(direction);
         }
+    }
+
+    private IEnumerator ResetAttackCooldown()
+    {
+        yield return new WaitForSeconds(attackDuration);
+        canAttack = true;
     }
 
     public void EndAttack()
