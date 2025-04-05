@@ -18,11 +18,9 @@ public class BossController : MonoBehaviour
 
     void Update()
     {
-        // Simple horizontal movement (ping-pong)
         float offset = Mathf.PingPong(Time.time * moveSpeed, moveRange * 2) - moveRange;
         transform.position = startPosition + new Vector3(offset, 0, 0);
 
-        // Fire timer
         fireTimer += Time.deltaTime;
         if (fireTimer >= fireInterval)
         {
@@ -34,15 +32,25 @@ public class BossController : MonoBehaviour
     void FireProjectiles()
     {
         Vector2[] directions = {
-            Vector2.down,                    // middle
-            (Vector2.down + Vector2.left).normalized,  // left
-            (Vector2.down + Vector2.right).normalized  // right
+            Vector2.down,
+            (Vector2.down + Vector2.left).normalized,
+            (Vector2.down + Vector2.right).normalized
         };
 
         foreach (Vector2 dir in directions)
         {
             GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-            proj.GetComponent<Rigidbody2D>().velocity = dir * 5f; // Adjust speed as needed
+
+            // Rotate to match direction
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            proj.transform.rotation = Quaternion.Euler(0f, 0f, angle + 90f);
+
+            // Tell the projectile it's from the boss
+            BossProjectile bp = proj.GetComponent<BossProjectile>();
+            if (bp != null)
+            {
+                bp.direction = dir;
+            }
         }
     }
 }
