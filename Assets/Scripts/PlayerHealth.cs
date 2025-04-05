@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class PlayerHealth : MonoBehaviour
     private bool isInvincible = false;
 
     public float invincibilityDuration = 1f;
+    public float deathDelay = 1.5f; // Time before scene loads after death
 
     private void Start()
     {
@@ -66,6 +68,14 @@ public class PlayerHealth : MonoBehaviour
         GetComponent<PlayerMovement>().enabled = false;
         GetComponent<SwordAttack>().enabled = false;
         GetComponent<ShootAttack>().enabled = false;
+
+        StartCoroutine(LoadSceneAfterDelay());
+    }
+
+    private IEnumerator LoadSceneAfterDelay()
+    {
+        yield return new WaitForSeconds(deathDelay);
+        SceneManager.LoadScene(4); // Transition to scene index 4
     }
 
     private IEnumerator FlashRed()
