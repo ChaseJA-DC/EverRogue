@@ -9,7 +9,7 @@ public class BossController : MonoBehaviour
     public float moveSpeed = 2f;
     public GameObject projectilePrefab;
     public Transform firePoint;
-    public float fireInterval = 2f;
+    public float fireInterval = 0.9f;
 
     [Header("Boss Health")]
     public float maxHealth = 20f;
@@ -95,7 +95,7 @@ public class BossController : MonoBehaviour
     private void Die()
     {
         Debug.Log("Boss defeated!");
-        StartCoroutine(LoadSceneAfterDelay());
+        SceneManager.LoadScene(5);
         Destroy(gameObject);
     }
 
@@ -114,11 +114,5 @@ public class BossController : MonoBehaviour
         {
             TakeDamage(sword.GetDamage());
         }
-    }
-
-    private IEnumerator LoadSceneAfterDelay()
-    {
-        yield return new WaitForSeconds(deathDelay);
-        SceneManager.LoadScene(5);
     }
 }

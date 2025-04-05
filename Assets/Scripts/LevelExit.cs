@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 public class LevelExit : MonoBehaviour
 {
     public int sceneToLoadIndex = 2;
- // Set in Inspector
     private bool levelClear = false;
 
     void Update()

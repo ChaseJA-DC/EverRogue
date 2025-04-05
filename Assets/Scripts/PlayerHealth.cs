@@ -75,7 +75,7 @@ public class PlayerHealth : MonoBehaviour
     private IEnumerator LoadSceneAfterDelay()
     {
         yield return new WaitForSeconds(deathDelay);
-        SceneManager.LoadScene(4); // Transition to scene index 4
+        SceneManager.LoadScene(4);
     }
 
     private IEnumerator FlashRed()
