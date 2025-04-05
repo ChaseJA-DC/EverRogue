@@ -9,6 +9,9 @@ public class PlayerHealth : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
     private bool isDead = false;
+    private bool isInvincible = false;
+
+    public float invincibilityDuration = 1f;
 
     private void Start()
     {
@@ -25,7 +28,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-        if (isDead) return;
+        if (isDead || isInvincible) return;
 
         currentHealth -= amount;
         Debug.Log("Player took damage! HP: " + currentHealth);
@@ -37,6 +40,17 @@ public class PlayerHealth : MonoBehaviour
         {
             Die();
         }
+        else
+        {
+            StartCoroutine(Invincibility());
+        }
+    }
+
+    private IEnumerator Invincibility()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincibilityDuration);
+        isInvincible = false;
     }
 
     private void Die()
@@ -59,5 +73,13 @@ public class PlayerHealth : MonoBehaviour
         spriteRenderer.color = Color.red;
         yield return new WaitForSeconds(0.07f);
         spriteRenderer.color = originalColor;
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            TakeDamage(collision.gameObject.GetComponent<Enemy>()?.damage ?? 1);
+        }
     }
 }
