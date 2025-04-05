@@ -13,6 +13,11 @@ public class SwordHitbox : MonoBehaviour
         hitstunDuration = stunTime;
     }
 
+    public float GetDamage()
+    {
+        return damage;
+    }
+
     public void ResetHitbox()
     {
         enemiesHit.Clear();

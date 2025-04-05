@@ -7,6 +7,7 @@ public class BossProjectile : MonoBehaviour
     public float lifetime = 2f;
     public Vector2 direction;
     private bool hasHit = false;
+    public bool isFromPlayer = false;
 
     void Start()
     {

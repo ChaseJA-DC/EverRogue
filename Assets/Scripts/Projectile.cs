@@ -10,6 +10,7 @@ public class Projectile : MonoBehaviour
     public float knockbackForce = 0.5f;
     private Vector2 direction;
     private bool hasHit = false;
+    public bool isFromPlayer = true;
 
     public void Initialize(Vector2 shootDirection)
     {
